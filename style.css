@@ -1,16 +1,13 @@
 body, html {
   margin: 0;
   padding: 0;
-  height: 100%;
   background: #f3f3f3;
   font-family: Arial, sans-serif;
 }
 
 .wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  display: block;
+  padding: 40px 0;
 }
 
 .card {
@@ -18,7 +15,9 @@ body, html {
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  width: 300px;
+  width: 90%;
+  max-width: 400px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
