@@ -31,6 +31,10 @@ function calculateCost() {
 
         // get the price for the selected grade (remove $ sign)
         const rawPrice = response.result.state[grade];
+        if (!rawPrice) {
+          document.getElementById("result").innerText = "Selected fuel grade data is unavailable for this state.";
+          return;
+        }
         const gasPrice = parseFloat(rawPrice.replace("$", ""));
 
         if (isNaN(gasPrice)) {
