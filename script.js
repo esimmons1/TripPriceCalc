@@ -11,14 +11,8 @@ async function calculateCost() {
   }
 
   try {
-    // convert zip to state (needed for gas API)
-    const locationResponse = await fetch(`https://api.zippopotam.us/us/${zip}`);
-    if (!locationResponse.ok) throw new Error('ZIP not found');
-    const locationData = await locationResponse.json();
-    const stateAbbreviation = locationData.places[0]['state abbreviation'];
-
-    // fetch gas price using my API key
-    const gasResponse = await fetch(`https://api.collectapi.com/gasPrice/stateUsaPrice?state=${stateAbbreviation}`, {
+    // fetch gas price using Gas Price Locator API
+    const gasResponse = await fetch(`https://zylalabs.com/api/4808/gas+price+locator+api/1234/latest-prices?zip=${zip}`, {
       method: 'GET',
       headers: {
         'Authorization': 'apikey 4jIOI6yWSsJA2BEkTOfqZS:4L3xkQ0EdU6ZV4EjQyFFws'
@@ -26,13 +20,13 @@ async function calculateCost() {
     });
 
     const gasData = await gasResponse.json();
-    if (!gasData.success || !gasData.result?.gasoline) {
+    if (!gasData || !gasData.data || gasData.data.length === 0) {
       document.getElementById('result').innerText = 'Couldn’t get gas price.';
       return;
     }
 
-    // parse gas price (remove $)
-    const gasPrice = parseFloat(gasData.result.gasoline.replace('$', ''));
+    // parse gas price (assuming the API returns a list of stations with prices)
+    const gasPrice = parseFloat(gasData.data[0].price);
     if (isNaN(gasPrice)) {
       document.getElementById('result').innerText = 'Bad gas data.';
       return;
