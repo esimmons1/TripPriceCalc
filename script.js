@@ -1,65 +1,71 @@
-// trip cost calculator using CollectAPI and user inputs
-
+// calculateCost() - triggered when user clicks the button
 function calculateCost() {
-  // get values from the input boxes
   const distance = parseFloat(document.getElementById("distance").value);
   const mpg = parseFloat(document.getElementById("mpg").value);
-  const state = document.getElementById("state").value.trim().toUpperCase();
+  const state = document.getElementById("state").value;
   const grade = document.getElementById("grade").value;
+  const manualPrice = parseFloat(document.getElementById("manualPrice").value);
+  const resultBox = document.getElementById("result");
 
-  // simple check to make sure stuff is filled in right
-  if (isNaN(distance) || isNaN(mpg) || mpg === 0 || state === "") {
-    document.getElementById("result").innerText = "Please fill in all fields correctly.";
+  // Check for basic input
+  if (isNaN(distance) || isNaN(mpg) || mpg <= 0) {
+    resultBox.innerText = "Please enter valid distance and MPG.";
     return;
   }
 
-  const url = `https://api.collectapi.com/gasPrice/stateUsaPrice?state=${state}`;
-  const xhr = new XMLHttpRequest();
+  // fallback calculation
+  function useManualPrice(reason) {
+    if (isNaN(manualPrice)) {
+      resultBox.innerText = `${reason} Also, no valid manual gas price entered.`;
+    } else {
+      const gallons = distance / mpg;
+      const cost = gallons * manualPrice;
+      resultBox.innerText = `${reason} Using your price: $${manualPrice.toFixed(2)}\nEstimated trip cost: $${cost.toFixed(2)}`;
+    }
+  }
 
+  // API fallback if no state
+  if (!state) {
+    useManualPrice("No state selected. Skipping gas price lookup.");
+    return;
+  }
+
+  // Start API call
+  const xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
   xhr.addEventListener("readystatechange", function () {
     if (this.readyState === this.DONE) {
       try {
-        const response = JSON.parse(this.responseText);
+        const data = JSON.parse(this.responseText);
 
-        // just making sure the API worked
-        if (!response.success || !response.result || !response.result.state) {
-          document.getElementById("result").innerText = "Couldn’t get gas price data.";
+        if (!data.success || !data.result || !data.result.state || !data.result.state[grade]) {
+          useManualPrice("Gas price data is temporarily unavailable.");
           return;
         }
 
-        // get the price for the selected grade (remove $ sign)
-        const rawPrice = response.result.state[grade];
-        if (!rawPrice) {
-          document.getElementById("result").innerText = "Selected fuel grade data is unavailable for this state.";
-          return;
-        }
-        const gasPrice = parseFloat(rawPrice.replace("$", ""));
+        const priceString = data.result.state[grade]; // e.g. "$3.217"
+        const gasPrice = parseFloat(priceString.replace("$", ""));
 
         if (isNaN(gasPrice)) {
-          document.getElementById("result").innerText = "Invalid price data for that grade.";
+          useManualPrice("Gas price returned from server is invalid.");
           return;
         }
 
-        // do the math
-        const gallonsUsed = distance / mpg;
-        const totalCost = gallonsUsed * gasPrice;
+        const gallons = distance / mpg;
+        const cost = gallons * gasPrice;
 
-        // show result
-        document.getElementById("result").innerText =
-          `Trip cost: $${totalCost.toFixed(2)} (Gas: $${gasPrice.toFixed(2)} per gallon)`;
-
-      } catch (error) {
-        console.error("Error parsing response:", error);
-        document.getElementById("result").innerText = "Something went wrong with the data.";
+        resultBox.innerText = `Estimated trip cost: $${cost.toFixed(2)} (Gas price: $${gasPrice.toFixed(2)} per gallon)`;
+      } catch (e) {
+        console.error(e);
+        useManualPrice("Something went wrong while processing gas data.");
       }
     }
   });
 
-  xhr.open("GET", url);
+  xhr.open("GET", `https://api.collectapi.com/gasPrice/stateUsaPrice?state=${state}`);
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("authorization", "apikey 4jIOI6yWSsJA2BEkTOfqZS:4L3xkQ0EdU6ZV4EjQyFFws");
 
-  xhr.send();
+  xhr.send(null);
 }
