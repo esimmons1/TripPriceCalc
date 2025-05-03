@@ -4,26 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Trip Cost Calculator</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <h1>Trip Cost Calculator</h1>
   <div class="container">
-    
-    <!-- distance input -->
+    <!-- Input boxes: Distance, MPG, State -->
     <label for="distance">Distance (miles):</label>
-    <input type="number" id="distance" placeholder="e.g. 300" />
+    <input type="number" id="distance" placeholder="e.g. 300"/>
 
-    <!-- mpg input -->
-    <label for="mpg">Car MPG:</label>
-    <input type="number" id="mpg" placeholder="e.g. 25" />
+    <label for="mpg">Car MPG (miles per gallon):</label>
+    <input type="number" id="mpg" placeholder="e.g. 25"/>
 
-    <!-- state input -->
-    <label for="state">State (2-letter code):</label>
-    <input type="text" id="state" placeholder="e.g. WA" />
+    <label for="state">Select State:</label>
+    <select id="state">
+      <option value="">--Select State--</option>
+      <option value="WA">Washington</option>
+      <option value="TX">Texas</option>
+      <option value="CA">California</option>
+      <!-- Add more as needed -->
+    </select>
 
-    <!-- fuel grade dropdown -->
-    <label for="grade">Fuel Grade:</label>
+    <label for="grade">Select Fuel Grade:</label>
     <select id="grade">
       <option value="regular">Regular</option>
       <option value="midGrade">Mid Grade</option>
@@ -31,10 +33,10 @@
       <option value="diesel">Diesel</option>
     </select>
 
-    <!-- button to run cost calculation -->
-    <button onclick="calculateCost()">Calculate Cost</button>
+    <label for="manualPrice">Last Gas Price You Paid ($):</label>
+    <input type="number" id="manualPrice" step="0.01" placeholder="e.g. 3.45" />
 
-    <!-- where the result goes -->
+    <button onclick="calculateCost()">Calculate Cost</button>
     <div id="result"></div>
   </div>
 
