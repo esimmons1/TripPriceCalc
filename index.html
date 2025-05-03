@@ -9,74 +9,28 @@
 <body>
   <h1>Trip Cost Calculator</h1>
   <div class="container">
-    <!-- User inputs -->
-    <label for="distance">Distance (miles):</label>
-    <textarea id="distance" placeholder="e.g. 300"></textarea>
+    <!-- put all the inputs here -->
+    <div class="input-group">
+      <label for="distance">Distance (miles):</label>
+      <input type="number" id="distance" placeholder="e.g. 300" />
+    </div>
 
-    <label for="mpg">Car MPG (miles per gallon):</label>
-    <textarea id="mpg" placeholder="e.g. 25"></textarea>
+    <div class="input-group">
+      <label for="mpg">Car MPG:</label>
+      <input type="number" id="mpg" placeholder="e.g. 25" />
+    </div>
 
-    <label for="zip">ZIP Code:</label>
-    <textarea id="zip" placeholder="e.g. 15213"></textarea>
+    <div class="input-group">
+      <label for="zip">ZIP Code:</label>
+      <input type="text" id="zip" placeholder="e.g. 15213" />
+    </div>
 
     <button onclick="calculateCost()">Calculate Cost</button>
 
-    <!-- Result output -->
+    <!-- where the result goes -->
     <div id="result"></div>
   </div>
 
-  <script>
-    // Calculate cost based on inputs
-    async function calculateCost() {
-    const distance = parseFloat(document.getElementById('distance').value);
-    const mpg = parseFloat(document.getElementById('mpg').value);
-    const zip = document.getElementById('zip').value.trim();
-  
-    if (isNaN(distance) || isNaN(mpg) || mpg === 0 || zip === '') {
-      document.getElementById('result').innerText = 'Please enter valid numbers and ZIP code.';
-      return;
-    }
-  
-    try {
-      // Step 1: Get state abbreviation from ZIP code
-      const locationResponse = await fetch(`https://api.zippopotam.us/us/${zip}`);
-      if (!locationResponse.ok) {
-        throw new Error('Invalid ZIP code');
-      }
-      const locationData = await locationResponse.json();
-      const stateAbbreviation = locationData.places[0]['state abbreviation'];
-  
-      // Step 2: Fetch average gas price from CollectAPI
-      const gasResponse = await fetch(`https://api.collectapi.com/gasPrice/stateUsaPrice?state=${stateAbbreviation}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'apikey 4jIOI6yWSsJA2BEkTOfqZS:4L3xkQ0EdU6ZV4EjQyFFws'
-        }
-      });
-  
-      const gasData = await gasResponse.json();
-  
-      if (!gasData.success || !gasData.result?.gasoline) {
-        document.getElementById('result').innerText = 'Unable to retrieve gas price.';
-        return;
-      }
-  
-      const gasPrice = parseFloat(gasData.result.gasoline.replace('$', ''));
-  
-      if (isNaN(gasPrice)) {
-        document.getElementById('result').innerText = 'Invalid gas price data received.';
-        return;
-      }
-  
-      const gallonsUsed = distance / mpg;
-      const totalCost = gallonsUsed * gasPrice;
-  
-      document.getElementById('result').innerText = `Estimated trip cost: $${totalCost.toFixed(2)} (Gas price: $${gasPrice.toFixed(2)} per gallon)`;
-    } catch (error) {
-      console.error('Error:', error);
-      document.getElementById('result').innerText = 'An error occurred while calculating the trip cost.';
-    }
-  }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
