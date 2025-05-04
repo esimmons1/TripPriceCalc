@@ -91,3 +91,11 @@ button:hover {
   text-align: center;
   margin-top: 10px;
 }
+
+#result {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #ffc107;
+  text-align: center;
+}
+
