@@ -2,7 +2,7 @@ TripPriceCalc
 =============
 
 Made by: Ellis Simmons  
-Language: HTML / CSS / JavaScript  
+Language: HTML, JavaScript, CSS
 
 ---
 
