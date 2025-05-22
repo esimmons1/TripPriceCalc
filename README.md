@@ -1,7 +1,7 @@
 TripPriceCalc
 =============
 
-Made by: Ellis Simmons  
+Made by: Ellis Simmons, Spring 2025    
 Language: HTML, JavaScript, CSS
 
 ---
